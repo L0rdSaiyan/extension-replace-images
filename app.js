@@ -1,7 +1,19 @@
-const form = document.querySelector('form')
+const form = document.querySelector('form');
+const input = document.querySelector('#inputUrl'); 
 
-form.addEventListener('submit', event =>{
+const replaceImages = (url) => {
+    const images = document.querySelectorAll('img');
+    images.forEach((image) => image.src = url); 
+};
 
- event.preventDefault();
-    alert('está funfando')
-})
+form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: replaceImages,
+        args: [input.value]
+    });
+});
